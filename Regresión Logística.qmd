@@ -1,0 +1,570 @@
+---
+documentclass: article
+format: pdf
+fontsize: 12pt
+editor: visual
+header-includes:
+
+- \usepackage[utf8]{inputenc} 
+# Formato de titulo de capitulo
+# Options: Sonny, Lenny, Glenn, Conny, Rejne, Bjarne, Bjornstrup
+- \usepackage[Lenny]{fncychap}
+- \usepackage{multirow}
+- \usepackage{float}
+- \usepackage[bottom=1in, top=1in, left=1in, right=1in]{geometry}
+#- \usepackage{setspace}
+- \usepackage{fancyhdr}
+- \pagestyle{fancy}
+- \usepackage{makeidx}
+- \usepackage{graphicx}
+- \usepackage{wrapfig}
+- \usepackage{enumerate}
+#- \renewcommand{\headrulewidth}{3pt}
+- \renewcommand{\baselinestretch}{1.5}
+- \renewcommand{\headrulewidth}{0.0001cm}
+lang: es
+---
+
+```{=tex}
+\begin{titlepage}
+\centering
+{\bfseries\Large UNIVERSIDAD DE EL SALVADOR}\\ 
+\vspace{0.2cm}
+{\bfseries\Large FACULTAD MULDISCIPLINARIA DE OCCIDENTE}\\
+\vspace{0.2cm}
+{\bfseries\Large DEPARTAMENTO DE MATEMÁTICA\par}
+\vspace{0.2cm}
+{\bfseries\Large LICENCIATURA EN ESTADÍSTICA\par}
+\vspace{0.2cm}
+{\bfseries\Large PROYECTOS DE ESTUDIOS ESTADÍSTICOS\par}
+\vspace{0.4cm}
+{\includegraphics[width = 0.3\textwidth]{miner.png}\par}
+\vspace{0.2cm}
+{\bfseries\Large Predicción de la clase social: \\ Una aplicación de  la Regresión Logística Multinomial\par}
+\vspace{0.5cm}
+{\bfseries\Large DOCENTE: \par}
+{\bfseries\Large Lic. Jaime Isaac Peña \par}
+\vspace{1cm}
+{\bfseries\Large PRESENTADO POR: \par}
+{\bfseries\Large Hugo Fernando López Cortés \par}
+\vfill
+{\bfseries\Large   \par}
+\thispagestyle{empty}
+\end{titlepage}
+```
+```{=tex}
+\newpage
+\tableofcontents
+\newpage
+```
+```{=tex}
+\begin{center}
+\section { 1. Regresión Logística }
+\end{center}
+```
+La regresión logística (RL) forma parte del conjunto de métodos estadísticos que caen bajo tal denominación y es la variante que corresponde al caso en que se valora la contribución de diferentes factores en la ocurrencia de un evento simple. a RL es una de las técnicas estadístico‐inferenciales más empleadas en la producción científica contemporánea. Surge en la década del 60, su generalización dependía de la solución que se diera al problema de la estimación de los coeficientes. El algoritmo de Walker‐Duncan para la obtención de los estimadores de máxima verosimilitud vino a solucionar en parte este problema, pero era de naturaleza tal que el uso de computadoras era imprescindible.
+
+La regresión logística es una regresión múltiple cuando la variable dependiente es no métrica. Si dicha variable únicamente posee dos niveles se conoce como regresión logística binomial, y si posee más se denomina regresión logística multinomial. Por ejemplo, esta técnica estadística permite estudiar problemas típicos como la explicación o predicción de la quiebra de empresas, o la decisión del consumidor de recomprar o no un producto o servicio. En este sentido, dada la naturaleza de los objetivos de la aplicación, resulta pertinente aclarar la importancia de no abordar estos problemas mediante una regresión lineal múltiple. La razón es que cuando la variable dependiente es no métrica, por ejemplo, dicotómica, es imposible que cumpla las exigencias de una regresión múltiple: no puede seguir una distribución normal ni tener varianza constante. Tampoco podría cumplirse la hipótesis de linealidad, entonces, la solución pasa por linealizar de alguna forma lo que es una relación no lineal, que en lo que se basa el modelo de regresión logística.
+
+\subsection { 1.1. Modelo de regresión logística binomial }
+
+Suponiendo que se desea analizar la relación de una variable dependiente limitada dicotómica $Y$ que toma los valores 0 y 1 en función de una variable métrica $X$. La relación entre la variable $X$ y $Y$ en un modelo de regresión lineal se plantearía del siguiente modo:
+
+```{=tex}
+\begin{center}
+$Y_i=β_0+β_1 X_1i+ε_i$
+\end{center}
+```
+Donde $β_0$ sería el intercepto al eje de coordenadas y $β_1$ la pendiente de esa recta. De forma general, si se tuvieran $n$ variables explicativas, entonces la expresión anterior quedaría:
+
+```{=tex}
+\begin{center}
+$Y_i=β_0+β_1 X_1i+ β_2 X_2i+⋯+β_n X_ni+ε_i$
+\end{center}
+```
+A diferencia de la regresión lineal, la regresión logística no predice el valor $Y_i$ dado los valores de $X_i$, sino que directamente estima la probabilidad de que ocurra $Y_i (Y_i=1)$ dados los valores de $X_i$. Por supuesto que incorpora las expresiones anteriores para tener en cuenta la relación entre la variable dependiente y las independientes, pero las envuelve en la siguiente función para calcular la probabilidad de ocurrencia en lugar de predecir $Y_i$:
+
+```{=tex}
+\begin{center}
+$Pr(Y)=\frac{1}{1+e^{-(β_0+β_1 X_{1i}+ ) }}=\frac{1}{1+e^{-Y}}$
+\end{center}
+```
+Y para el caso de $n$ variables:
+
+```{=tex}
+\begin{center}
+$Pr(Y)=\frac{1}{1+e^{-(β_0+β_1 X_{1i}+ β_2 X_{2i}+⋯+β_n X_{ni} ) }}=\frac{1}{1+e^{-Y}}$
+\end{center}
+```
+Donde $Pr(Y)$ es la probabilidad de ocurrencia de $Y$, y $e$ es la base del logaritmo natural. Es la forma de linealizar la relación que no era lineal e impedía la estimación de una regresión lineal.
+
+\subsubsection { 1.1.1. Estimación del modelo }
+
+El modelo se estima mediante la minimización de la función de máxima-verosimilitud, que es un planteamiento análogo al evaluar cuanta información queda por explicar después que el modelo se ha estimado:
+
+```{=tex}
+\begin{center}
+$LL=\ \sum_{i=1}^{N}\left[Y_i\ln{\left(\Pr{\left(Y_i\right)}\right)+\left(1-Y_i\right)\ln{\left(1-\Pr{\left(Y_i\right)}\right)}}\right]$
+\end{center}
+```
+Suponiendo que, para un valor real de $Y=0$, la función estimada ha pronosticado una probabilidad de ocurrencia cercana a 0 entonces, la función logarítmica es 0 para $X = 1$. Dicho de otra manera, la función de máxima verisimilitud toma valores cercanos a 0 cuando la probabilidad predicha (cercana a 0 en caso de no ocurrencia, cercana a 1 en caso de ocurrencia) acierta a clasificar al caso como 0 a 1. Sin embargo, en el caso de desacierto, por ejemplo, con un $Y = 0$, se tiene que la función de máxima verisimilitud crece haciéndose grande, puesto que $ln(x)$ tiende a $-\infty$ cuando $x$ tiende a 0. En conclusión, mayor valor implicará menos capacidad de la estimación para replicar los valores reales.
+
+\subsubsection { 1.1.2. Contraste de hipótesis para el modelo estimado }
+
+Contraste de significatividad global: El primer paso es contrastar la hipótesis nula de que todos los coeficientes de regresión son nulos, dado que, de ser así, no tendría sentido continuar con la interpretación del modelo. Los pasos a seguir son: calcular la máxima verosimilitud $LL$ de un modelo en el que la función solo esta formada por el intercepto $\beta_0$, es decir un modelo en el que las variables explicativas no jugarían ningún papel o, dicho de otro modo, en que todos los $\beta$ son nulos $LL(0)$. Estimamos la función de máxima verosimilitud del modelo $LL(M)$, si este es significativamente más pequeño que el primero, se concluye que es más plausible (verosímil) por lo que alguna variable debe estar ejerciendo una influencia significativa en la predicción de la variable dependiente.
+
+Contraste para los coeficientes individuales: Una vez descartada la hipótesis de que todos los coeficientes son nulos, es necesario saber cuál es la contribución individual de los regresores a la explicación de la variable dependiente. El planteamiento en una regresión logística, al igual que en la regresión lineal, se construye un estadístico denominado test de Wald.
+
+\subsubsection { 1.1.3. Interpretación de los coeficientes de regresión }
+
+El papel de los coeficientes estandarizados en la regresión logística la juegan los denominados odds ratios. Se define odd de un acontecimiento como la razón entre su probabilidad de ocurrencia y la de no ocurrencia:
+
+```{=tex}
+\begin{center}
+$odd=\ \frac{\Pr(Y=1)}{\Pr(Y=0)}$
+\end{center}
+```
+Siguiendo el caso de la probabilidad de ocurrencia de Pr(Y) entonces el odd puede escribirse como:
+
+```{=tex}
+\begin{center}
+$odd=\ \frac{\Pr(Y=1)}{\Pr(Y=0)} = \frac{\frac{1}{1+e^{-Y}}}{1-\frac{1}{1+e^{-Y}}}=e^Y$
+\end{center}
+```
+Pero $e^Y$ puede expresarse como:
+
+```{=tex}
+\begin{center}
+$e^Y=e^{\beta_0+\beta_1X_{1i}+\ \beta_2X_{2i}+\ldots+\beta_nX_{ni}}=e^{\beta_0}e^{\beta_1X_{1i}+\ \beta_2X_{2i}+\ldots+\beta_nX_{ni}}$
+\end{center}
+```
+Al termino $e^{\beta_i}$ se le conoce como odd ratio y su interpretación es la siguiente: es el factor en que se incrementa el odd cuando la variable independiente i-ésima se incrementa en una unidad (y el resto permanecen constantes). Mayores odd ratios pueden interpretarse como mayor influencia relativa de esa variable en la predicción de la ocurrencia del caso.
+
+```{=tex}
+\subsubsection { 1.1.4. Ajuste del modelo }
+\begin{itemize}
+\item {$R^2$ de McFadden}
+\end{itemize}
+\begin{center}
+${R^2}_{MF}=\ \frac{-2LL\left(0\right)-(-2LL\left(M\right))}{-2LL\left(0\right)}$
+\end{center}
+```
+Es la proporción de la reducción que supone el modelo con respecto al modelo base. Varia entre 0 y 1.
+
+```{=tex}
+\begin{itemize}
+\item {$R^2$ de Cox y Snell}
+\end{itemize}
+\begin{center}
+${R^2}_{CS}=1-e^{\left[\frac{1}{N}\left(2LL\left(M\right)\right)-2LL(0)\right]}$
+\end{center}
+```
+Donde $N$ es el tamaño muestral. Esta medida, por su construcción, nunca puede alcanzar el 1, por esta razón Nagelkerke propone:
+
+```{=tex}
+\begin{itemize}
+\item {$R^2$ de Nagelkerke}
+\end{itemize}
+\begin{center}
+${R^2}_N=\frac{{R^2}_{CS}}{1-e^{\left[\frac{2LL(0)}{N}\right]}}$
+\end{center}
+```
+```{=tex}
+\begin{itemize}
+\item {Matriz de confusión}
+\end{itemize}
+```
+Consiste en comparar los valores reales de la variable dependiente con los valores predichos. Dado que se conoce su pertenencia real, basta con generar una tabla cruzada de valores reales y valores predichos, cuantos más elementos haya en la diagonal de esa tabla, mejor será la precisión del modelo.
+
+\subsubsection { 1.1.5. Capacidad discriminante del modelo}
+
+La capacidad discriminante del modelo es la capacidad del mismo para distinguir entre los los grupos en función de la probabilidad predicha. En cierta forma, la matriz de confusión sirve como indicador, sobre todo su se completa con los porcentajes de sensibilidad y especifidad. Sin embargo, existen indicadores adicionales que pueden utilizarse, fundamentalmente el estadístico c asociado a las curvas ROC (Receiver Operating Characteristic).
+
+\subsection { 1.2. Regresión logística multinomial}
+
+La regresión logística multinomial es utilizada en modelos con variable dependiente de tipo nominal con más de dos categorías (politómica). Los modelos de elección discreta con más de dos alternativas se denominan modelos multinomiales. Considerando que el número de alternativas son $J+1\ (0,1,2,\ldots J)$, tomándose a la alternativa 0 como categoría de referencia. Para construir el modelo logit multinomial se requiere J vectores de parámetrso, entonces se define:
+
+```{=tex}
+\begin{center}
+$Z_{ij}=\beta_{1j}+\ \beta_{2j}X_{2i}+\ldots+\beta_{kj}X_{ki}$
+\end{center}
+```
+Las probabilidades de cada alternativa se expresan de la siguiente forma:
+
+```{=tex}
+\begin{center}
+$P_{ij}=Pr\left(Y_i=j\right)=\frac{e^{-\left(\beta_{1j}+\ \beta_{2j}X_{2i}+\ldots+\beta_{kj}X_{ki}\right)}}{1+\sum_{g=1}^{J}e^{-\left(\beta_{1j}+\ \beta_{2j}X_{2i}+\ldots+\beta_{kj}X_{ki}\right)}\ }$
+\end{center}
+```
+```{=tex}
+\begin{center}
+$P_{i0}=Pr\left(Y_i=0\right)=\frac{1}{1+\sum_{g=1}^{J}e^{-\left(\beta_{1j}+\ \beta_{2j}X_{2i}+\ldots+\beta_{kj}X_{ki}\right)}\ }$
+\end{center}
+```
+Cuando $J$ es igual a 1, el modelo multinomial es igual al dicotómico. En el modelo anterior el logaritmo neperiano de los odds ratio entre la alternativa $j$ y la alternativa de la categoría de referencia (0) viene dada por:
+
+```{=tex}
+\begin{center}
+$\ln{\left[\frac{P_{ij}}{P_{ig}}\right]=\beta_{1j}-\beta_{1g}+\left(\beta_{2j}-\beta_{2g}\right)\ X_{2i}+\ldots+\left(\beta_{kj}-\beta_{kg}\right)\ X_{ki}}$
+\end{center}
+```
+En los modelos multinomiales los parámetros deben interpretarse con mucho cuidado. En principio, se podría pensar que el signo del efecto marginal de una variable sobre la probabilidad de elegir una alternativa solo depende del correspondiente elemento del vector $\beta_j$. Sin embargo, al derivar la expresión, se puede establecer que el efecto marginal de la variable $X_h$ es igual a:
+
+```{=tex}
+\begin{center}
+$\frac{\partial P_{ij}}{\partial X_h}=P_{ij}\left[\beta_{hj}-{\bar{\beta}}_h\right]$
+\end{center}
+```
+En donde, ${\bar{\beta}}_h$ es la media de los parámetros $\beta_{hj}$ para las J alternativas. Este efecto marginal donde P_j que siempre es positiva y la diferencia entre ${\bar{\beta}}_h$ y $\beta_{hj}$. Por tanto, el signo dependerá del coeficiente y alternativa que se esté analizando.
+
+A continuación, se presenta un caso de aplicación de la regresión logística multinomial a la predicción de la clase social de un individuo tomando como referencia sus calificaciones a lo largo de su paso por el sistema educativo.
+
+```{=tex}
+\begin{center}
+\section {2. Predicción de la clase social}
+\end{center}
+```
+Se desea saber en qué medida el desempeño de un individuo a lo largo de su paso por el sistema educativo es capaz de explicar su "éxito" final en la vida medido este como la clase social a la que pertenece tras unos años de acabar sus estudios. También es interesante conocer si el hecho de haber sido mejor estudiante en asignaturas relacionadas con las ciencias sociales o con las ciencias aplicadas influye en este resultado. La base de datos posee 200 registros y para realizar este análisis, se han seleccionado las siguientes variables de estudio:
+
+```{=tex}
+\begin{itemize}
+\item {\textit{ses}, es la clase social y esta codificada por 1 (Baja), 2 (Media) y 3 (Alta). Es la variable dependiente.}
+
+\item {\textit{female}, corresponde al sexo y esta codificado por 1 (Mujer) y 2 (Hombre).}
+
+\item {\textit{science}, es el puntaje estandarizado que mide el desempeño en la asignatura de ciencias.}
+
+\item {\textit{socst}, es el puntaje estandarizado que mide el desempeño en la asignatura de ciencias sociales.}
+\end{itemize}
+```
+Para llevar a cabo la aplicación de la regresión logística para predecir la clase social se propone la realización de los cálculos mediante tres softwares: R Statistical Computing, SPSS Statistics y el lenguaje de programación Python. No sin antes realizar un análisis exploratorio para condicionar los datos, como se muestra a continuación.
+
+\subsection {2.1 Análisis exploratorio}
+
+Importando las librerias
+
+```{r}
+library(haven)
+library(gmodels)
+library(nnet)
+library(stargazer)
+library(ggplot2)
+library(dplyr)
+library(cowplot)
+library(patchwork)
+library(plotrix)
+library(naniar)
+library(visdat)
+library(outliers)
+```
+
+Importando la base de datos, mostrando las dimensiones y los nombres de las variables
+
+```{r}
+datos  <-  read_sav("hsbdemo.sav")
+dim(datos)
+names(datos)
+```
+
+Empezaremos análizando las variables numéricas que se utilizaran en la aplicación de RLM, para ello se muestran algunos estadísticos
+
+```{r}
+summary(datos$science)
+summary(datos$socst)
+```
+
+Distribuciones de las variables del puntaje en las asignaturas de ciencias y sociales por sexo y clase social
+
+```{r}
+#Preparando variables para graficar
+sexo = as.factor(datos$female)
+cs = as.factor(datos$ses)
+
+pltscience = ggplot(data = datos) + 
+  geom_density(mapping = aes(x = science, fill =sexo), position = 'stack', alpha = 0.5) + 
+  xlab("Puntaje") + 
+  ylab("Frecuencia") + 
+  ggtitle("Distribución del puntaje en la asignatura de ciencias") +
+  theme_minimal() +
+  facet_wrap(~ses) 
+
+pltsocst =ggplot(data = datos) + 
+  geom_density(mapping = aes(x = socst, fill =sexo), position = 'stack', alpha = 0.5) + 
+  xlab("Puntaje") + 
+  ylab("Frecuencia") + 
+  ggtitle("Distribución del puntaje en la asignatura de estudios sociales") +
+  theme_minimal() +
+  facet_wrap(~ses) 
+
+pltscience / pltsocst
+```
+
+Histogramas de las variables del puntaje en las asignaturas de ciencias y sociales por sexo
+
+```{r}
+g1 = ggplot(data = datos, aes(x = science, fill = sexo)) +
+  geom_histogram( binwidth = 3, color = "white")
+g2 = ggplot(data = datos, aes(x = socst, fill = sexo)) +
+  geom_histogram( binwidth = 3, color = "white")
+g1+g2
+```
+
+Ahora se estudiaran las variables categóricas female (sexo) y clases social (ses).
+
+```{r}
+str(datos$ses)
+table(datos$ses)
+tses = table(datos$ses)
+pie3D(tses, labels=tses,
+      explode=0.05, col = hcl.colors(length(tses), "Spectral"),
+      main="Individuos por clase social") 
+
+
+str(datos$female)
+table(datos$female)
+ggplot(data = datos, aes(x = female, fill = sexo)) + 
+  geom_bar() + 
+  ggtitle("Cantidad de hombres (0) y mujeres (1)") +
+  labs(fill = "Sexo") + 
+  theme_minimal() 
+
+```
+
+Es pertinente realizar un análisis de datos atípicos, para ello se estudiaran mediante las distancias de Mahalanobis y mediante los graficos de cajas y bigotes se podran visualizar.
+
+```{r}
+# Gráfico de cajas y bigotes
+ggplot(datos, aes(x = cs, y = science, fill=sexo, alpha=0.5)) + 
+  geom_boxplot()
+ggplot(datos, aes(x = cs, y = socst, fill=sexo, alpha=0.5)) + 
+  geom_boxplot()
+
+#Mahalanobis
+#Seleccionando las variables de interés
+studyData = datos%>%select(science,socst)
+
+#Cualculando las distancias
+mahalanobis_distance = mahalanobis(studyData, colMeans(studyData), cov(studyData))
+
+#Detectamos valores anómalos
+outliers = scores(mahalanobis_distance, type = "z", prob =0.99)
+cat(sum(outliers), "valores pertenecen al 1% más extremo")
+
+#Mostrando 10 casos
+data.frame(Index=which(outliers),
+           SCIENCE = datos$science[outliers],
+           SOCST = datos$socst[outliers])%>%arrange(SCIENCE, SOCST)%>%head(10)
+```
+
+Contando y visualizando valores perdidos.
+
+```{r}
+miss_var_summary(studyData)
+vis_miss( studyData,sort_miss = TRUE)
+```
+
+A continuación se presenta la aplicación de la regresión logística multinomial en el software R Statistical Computing. Primero se obtendrá toda la información y por último en el tercer apartado se presentaran los respectivos análisis e interpretaciones.
+
+\subsection {2.2 R Statistical Computing}
+
+Análisis bivariado de las variables dependiente e independientes
+
+```{r}
+CrossTable(datos$female, datos$ses, chisq=T, prop.chisq = F, prop.t = F, prop.c = F)
+aggregate(cbind(science, socst)~ses, data = datos, mean, na.rm=T)
+```
+
+Estimación del modelo con la categoría bajo en como nivel de referencia en la variable dependiente
+
+```{r}
+multi1 =multinom(datos$ses ~ science + socst + female, data = datos)
+summary(multi1)
+```
+
+Estimacion del modelo solo con la constante (ratio de verosimilitud)
+
+```{r}
+multi0 = multinom(ses ~ 1, data=datos)
+```
+
+Calculando el estadistico ji cuadrado como diferencia de sus -2LL (deviance)
+
+```{r}
+chi2 = multi0$deviance - multi1$deviance
+df.chi2 = multi1$edf - multi0$edf
+sig.chi2 = 1 - pchisq(chi2, df.chi2)
+print(cbind(chi2, df.chi2, sig.chi2))
+```
+
+Calculando el pseudo $R^{2}$ de McFadden (Significatividad global del modelo)
+
+```{r}
+R2MF = chi2/multi0$deviance
+print(R2MF)
+```
+
+Coeficientes de regresión del modelo y su significatividad
+
+```{r}
+z = summary(multi1)$coefficients/summary(multi1)$standard.errors
+z
+p = (1  -  pnorm ( abs (z),  0 ,  1 ))  *  2 
+p
+stargazer(multi1, type = "text")
+```
+
+Risk ratios del modelo estimado
+
+```{r}
+multi1.rrr = exp(coef(multi1))
+stargazer(multi1, type = "text", coef = list(multi1.rrr), p.auto = F)
+```
+
+A continuación se presenta la aplicación de la regresión logística multinomial en el software SPSS Statistics. Primero se obtendrá toda la información y por último en el tercer apartado se presentaran los respectivos análisis e interpretaciones.
+
+\subsection {2.3 SPSS Statistics}
+
+Frecuencias para las variables categóricas de sexo y clase social con sus respectivos porcentajes margiales
+
+```{=tex}
+\begin{center}
+\includegraphics[width=0.8\textwidth]{RL1.png}
+\end{center}
+\vspace{1cm}
+```
+Criterio de información de Akaike (AIC) del modelo estimado
+
+```{=tex}
+\begin{center}
+\includegraphics[width=1\textwidth]{RL2.png}
+\end{center}
+```
+Ajuste de modelo: Criterios AIC. BIC y chi cuadrado
+
+```{=tex}
+\begin{center}
+\includegraphics[width=1\textwidth]{RL3.png}
+\end{center}
+```
+Tabla de bondad de ajuste de Pearson y desviación
+
+```{=tex}
+\begin{center}
+\includegraphics[width=0.8\textwidth]{RL4.png}
+\end{center}
+```
+Significatividad global del modelo: $R^2$ de McFadden, $R^2$ de Cox y Snell y $R^2$ de Negelkerke
+
+```{=tex}
+\begin{center}
+\includegraphics[width=0.8\textwidth]{RL5.png}
+\end{center}
+```
+Significatividad del modelo por variable
+
+```{=tex}
+\begin{center}
+\includegraphics[width=1\textwidth]{RL6.png}
+\end{center}
+```
+Risk ratios del modelo estimado
+
+```{=tex}
+\begin{center}
+\includegraphics[width=1\textwidth]{RL7.png}
+\end{center}
+```
+A continuación se presenta la aplicación de la regresión logística multinomial en el lenguaje de programación Python. Primero se obtendrá toda la información y por último en el tercer apartado se presentaran los respectivos análisis e interpretaciones.
+
+\subsection {2.4 Python}
+
+Importanto paqueterías
+
+```{python}
+import pandas as pd
+import numpy as np
+import pyreadstat as pr
+from sklearn.metrics import accuracy_score
+import statsmodels.api as sm
+import warnings
+warnings.filterwarnings('ignore')
+```
+
+Importando la base de datos y mostrando los nombres y tipos de las variables
+
+```{python}
+datos = pd.read_spss(r"C:\Users\Fernando\OneDrive\Documentos\Ciclo II - 2023\Proyectos Estadísticos\hsbdemo.sav")
+datos.head()
+datos.dtypes
+```
+
+Frecuencia de los datos para cada una de las variables categóricas que se utilizarán en la aplicación de la RLM
+
+```{python}
+print(datos.ses.value_counts())
+print(datos.female.value_counts())
+```
+
+Estadísticos descriptivos de las variables númericas del puntaje en la asignatura de ciencias y estudios sociales respectivamente
+
+```{python}
+print(datos.science.describe())
+print(datos.socst.describe())
+```
+
+Análisis bivariado de las variables dependiente e independientes
+
+```{python}
+Cross_Table=pd.crosstab(datos["female"],datos["ses"])
+Cross_Table
+```
+
+Estimación y ajuste del modelo
+
+```{python}
+#Seleccionando variables de estudio
+y = datos['ses']
+x = datos[["science", "socst"]]
+
+# Haciendo female variable dummie
+recod = pd.get_dummies(datos['female'], drop_first = True)
+recod = pd.DataFrame(np.where(recod,1,0), columns = recod.columns)
+x = pd.concat((x, recod), axis = 1)
+
+# Estimando el modelo
+mod = sm.MNLogit(y, sm.add_constant(x))
+Resultado = mod.fit()
+print(Resultado.summary2())
+```
+
+Precisión del modelo estimado
+
+```{python}
+Clasificacion = pd.DataFrame(Resultado.pred_table(), columns = ['Alto', 'Bajo', 'Medio'],
+index = ['Alto', 'Bajo', 'Medio'], dtype = np.int8)
+print(Clasificacion)
+```
+
+Con toda la información que se ha obtenido, estamos en condiciones de interpretar los resultados. A continuación se presenta el análisis de los resultados de forma general.
+
+\section {3. Análisis de los resultados}
+
+La tabla de contingencia o tabla cruzada, nos muestra a nivel bivariado, la relación que existe entre la variable dependiente, clase social y las variables independientes. El porcentaje de hombres en la clase media y alta es mayor que el de mujeres y, también, el desempeño de los estudios ha sido mayor cuanto mayor es la clase social.
+
+Estando en condiciones de estimar la regresión logística, y tomando como referencia la categoría de clase social baja, debido a que si un individuo pertenece a ella se considera como éxito ascender a clase media o alta, entonces se estima el modelo, obteniendo como un primer vistazo que el modelo final se ajusta mejor en relación a los criterios AIC versus BIC, dado que este último es mayor. Sin embargo, es necesario realizar una prueba de bondad de ajuste para verificar si el modelo estimado se ajusta adecuadamente, por ellos se propone la bondad de ajuste de Pearson y la desviación, obteniendo como resultado 0.24 y 0.33 respectivamente. Dado que ambos valores son mayores que 0.05 no se rechaza la hipótesis nula de que los valores predichos por el modelo no difieren significativamente de los valores observados, es decir, existe un buen ajuste del modelo.
+
+El $R^2$ de Nagelkerke es de 0.174, es decir, el modelo explica un 17.4% del cambio de la varianza de la variable dependiente (clase social). El pseudo $R^2$ de McFadden es de 0.079, lo que indica que el modelo solo predice el 7.9% del cambio de la clase social, ambas medidas correctoras son a priori demasiado bajos para el ajuste del modelo, es necesario recordar que estos pseudos R\^2 no son un equivalente al $R^2$ que se presenta en la regresión múltiple que, es una medida muy intuitiva de lo bien que el modelo predice la variable dependiente. En conclusión, la capacidad de ajuste del modelo no es adecuada, sin embargo, para efectos prácticos de la aplicación de la regresión logística multinomial se continuará con el análisis de la importancia de los predictores en el modelo.
+
+\vspace{1cm}
+
+Recordando que la categoría de referencia de la variable dependiente es la clase social baja, con base a los coeficientes de regresión del modelo, el coeficiente de regresión de las notas en ciencias sociales es significativo y positivo para las clases medias y altas en relación con la clase baja. El signo de los coeficientes nos señala que un incremento en esta área de conocimiento incrementa la probabilidad de estar en la clase media y en la clase alta respecto a estar en la baja. Sin embargo, que el signo de la variable sexo es negativo para las dos clases sociales y que esta codificado como 1 (mujer), señala que, permaneciendo todos las demás constantes, ser mujer disminuye la probabilidad de estar en la las clases media y alta.
+
+Para analizar el impacto relativo de las variables nos fijamos en los risk ratio superiores a la unidad entonces podemos ver que el mayor impacto sobre la movilidad social la tiene la variable sexo, puesto que ser mujer hace 0.87 veces más probable estar en la clase media respecto a estar en la baja, pero claro, multiplicar por 0.87 es una disminución de la probabilidad de ocurrencia.
+
+A medida que el valor del puntaje de las calificaciones en la asignatura de ciencias aumenta en una unidad, un individuo tiene 1.024 veces más de probabilidades de pertenecer a la clase social media y 1.048 veces más de probabilidades de pertenecer a la clase alta. Además, a medida que el valor del puntaje de las calificaciones en la asignatura de estudios sociales aumenta en una unidad, un individuo tiene 1.040 veces más de probabilidades de pertenecer a la clase social media y 1.085 veces más de probabilidades de pertenecer a la clase alta.
+
+Por último, la precisión del modelo solamente 19 de los 58 casos para la categoría de clase social alta fueron predichos correctamente; también 11 de los 47 casos para la categoría de clase social baja fueron predichos correctamente, y para la clase social media los valores predichos correctamente fueron 76 de 95.
+
+\section {4. Conclusiones}
+
+La regresión logística resulta útil para los casos en los que se desea predecir la presencia o ausencia de una característica o resultado según los valores de un conjunto de predictores. Es similar a un modelo de regresión lineal, pero está adaptado para modelos en los que la variable dependiente es dicotómica o politómica. Los coeficientes de regresión logística pueden utilizarse para estimar la razón de probabilidad de cada variable independiente del modelo. La regresión logística se puede aplicar a un rango más amplio de situaciones de investigación que el análisis discriminante. Para el caso de aplicación sobre la predicción de la clase social, con base al Pseudo $R^2$ de McFadden la estimación del modelo no se ajustó adecuadamente, y únicamente la categoría del puntaje en ciencia sociales predice significativamente para el nivel de clases sociales media y alta en relación a la clase baja. Con base a los risk ratios el mayor impacto sobre la movilidad social la tiene la variable sexo, puesto que ser mujer hace 0.87 veces más probable estar en la clase media respecto a estar en la baja. Finalmente, la capacidad predictora del modelo fue adecuada para la clase social media dado que los valores predichos correctamente fueron 76 de 95.
